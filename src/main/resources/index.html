@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Загрузка Excel</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h1 {
+        font-size: 27px;
+        line-height: 30px;
+        letter-spacing: -0.04em;
+        color: #1c1c1c;
+        margin-bottom: 1em;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      button {
+        margin-top: 1em;
+        padding: 0.5em 1em;
+        border: none;
+        border-radius: 5px;
+        background-color: #1c1c1c;
+        color: white;
+        cursor: pointer;
+      }
+      .main {
+        margin: 2em;
+        width: 400px;
+        border: 1px solid #ccc;
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+        padding: 1em;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Загрузите Excel (.xls или .xlsx)</h1>
+    <div class="main">
+      <form method="post" enctype="multipart/form-data" action="/upload">
+        <input type="file" name="file" accept=".xls,.xlsx" required />
+        <button type="submit">Отправить файл</button>
+      </form>
+    </div>
+  </body>
+</html>
