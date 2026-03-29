@@ -8,9 +8,11 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
+    private static final Pattern URL_PATTERN = Pattern.compile("(?i)(https?|ftp|file|mailto):[^\\s]+");
     public static void main(String[] args) throws IOException {
         int port = 8080;
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -97,14 +99,18 @@ public class Main {
                         for (Cell cell : row) {
                             String value = getCellValue(cell);
                             result.append("<td>");
-                            if (isUrl(value)) {
-                                result.append("<a href='").append(value).append("' target='_blank'>")
-                                      .append(value).append("</a>")
+                            Matcher matcher = URL_PATTERN.matcher(value);
+                            int lastEnd = 0;
+                            while (matcher.find()) {
+                                String url = matcher.group();
+                                result.append(value.substring(lastEnd, matcher.start()));
+                                result.append("<a href='").append(url).append("' target='_blank'>")
+                                      .append(url).append("</a>")
                                       .append("<button class='copy' onclick=\"copyToClipboard('")
-                                      .append(escapeJs(value)).append("')\">📋</button>");
-                            } else {
-                                result.append(value);
+                                      .append(escapeJs(url)).append("')\">📋</button>");
+                                lastEnd = matcher.end();
                             }
+                            result.append(value.substring(lastEnd));
                             result.append("</td>");
                         }
                         result.append("</tr>");
@@ -139,12 +145,6 @@ public class Main {
             case FORMULA -> cell.getCellFormula();
             default -> "";
         };
-    }
-
-    private static boolean isUrl(String text) {
-        if (text == null) return false;
-        String lower = text.toLowerCase(Locale.ROOT).trim();
-        return Pattern.matches("^(https?|ftp|file|mailto):.+", lower);
     }
 
     private static String escapeJs(String text) {
